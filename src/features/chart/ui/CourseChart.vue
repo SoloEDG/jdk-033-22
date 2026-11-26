@@ -42,6 +42,10 @@ const trailPath = computed(() => pathFor(props.trail))
       <g v-if="focus" :transform="`translate(${focus.x} ${focus.y})`" stroke="#ffb44b" fill="none">
         <circle r="17" stroke-width="2"/><path d="M-24 0h11m26 0h11M0-24v11m0 26v11"/>
       </g>
+      <g v-if="frame.partner">
+        <BoatGlyph :boat="frame.partner" tint="#8fd4ea"/>
+        <text :x="frame.partner.position.x" :y="frame.partner.position.y - 26" text-anchor="middle" fill="#bfe9f5" class="water-text">陪练</text>
+      </g>
       <BoatGlyph :boat="frame.boat"/>
       <g transform="translate(876 54)" stroke="#f1e9cd" fill="none">
         <circle r="23" opacity=".5"/><path d="M0 17V-15M-11 0H11M-4-9L0-16 4-9"/>

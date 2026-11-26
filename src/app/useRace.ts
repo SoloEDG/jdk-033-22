@@ -1,8 +1,8 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { course } from '../features/chart'
 import { useWind } from '../features/wind'
-import { useSail } from '../features/sail'
-import { useJury } from '../features/jury'
+import { useSail, usePartner } from '../features/sail'
+import { useJury, useEncounter } from '../features/jury'
 import { useLogbook } from '../features/logbook'
 import type { Point, RaceEvent, RaceStatus, Sample } from '../shared/race'
 
@@ -13,13 +13,15 @@ export function useRace() {
   const wind = useWind()
   const sail = useSail(course)
   const jury = useJury(course)
+  const partner = usePartner(course)
+  const encounter = useEncounter(course, jury.add)
   const logbook = useLogbook()
   const status = ref<RaceStatus>('ready')
   const elapsed = ref(0)
   const focus = ref<Point | null>(null)
   const live = computed<Sample>(() => ({
     time: elapsed.value, boat: sail.boat.value, wind: wind.sample(elapsed.value),
-    nextGate: jury.nextGate.value, penalty: jury.penalty.value,
+    nextGate: jury.nextGate.value, penalty: jury.penalty.value, partner: partner.boat.value,
   }))
   const frame = computed(() => logbook.frame.value ?? live.value)
   const trail = computed(() => (logbook.selected.value?.samples ?? logbook.samples.value).map(sample => sample.boat.position))
@@ -33,6 +35,8 @@ export function useRace() {
     logbook.samples.value = []
     sail.reset()
     jury.reset()
+    partner.reset()
+    encounter.reset()
   }
   function start() {
     const mode = wind.mode.value
@@ -64,6 +68,8 @@ export function useRace() {
     const verdict = jury.inspect(from.position, next.position, elapsed.value, stepSize)
     sail.boat.value = verdict.blocked ? { ...next, position: from.position, knots: 0 } : next
     elapsed.value += stepSize
+    partner.step(live.value.wind, stepSize)
+    encounter.update(sail.boat.value, partner.boat.value, live.value.wind, elapsed.value)
     if (verdict.finish) {
       elapsed.value = verdict.finish.time
       sail.boat.value = { ...next, position: verdict.finish.position }

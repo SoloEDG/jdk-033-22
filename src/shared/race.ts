@@ -25,6 +25,7 @@ export interface Wind { bearing: number; knots: number }
 export interface Boat { position: Point; heading: number; knots: number; sheet: number; rudder: number }
 export type RaceStatus = 'ready' | 'running' | 'paused' | 'finished' | 'abandoned'
 export type EventKind = 'start' | 'mark' | 'collision' | 'deviation' | 'finish' | 'abandon'
+  | 'duty' | 'exhaust' | 'contact' | 'verdict'
 export interface RaceEvent {
   id: string
   time: number
@@ -39,6 +40,7 @@ export interface Sample {
   wind: Wind
   nextGate: number
   penalty: number
+  partner?: Boat
 }
 export interface Voyage {
   id: string

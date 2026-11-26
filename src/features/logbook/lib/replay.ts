@@ -20,5 +20,11 @@ export function sampleAt(samples: Sample[], time: number): Sample | null {
       bearing: normalize(a.wind.bearing + angleDelta(a.wind.bearing, b.wind.bearing) * fraction),
       knots: mix(a.wind.knots, b.wind.knots, fraction),
     },
+    partner: a.partner && b.partner && discrete.partner ? {
+      ...discrete.partner,
+      position: pointAt(a.partner.position, b.partner.position, fraction),
+      heading: normalize(a.partner.heading + angleDelta(a.partner.heading, b.partner.heading) * fraction),
+      knots: mix(a.partner.knots, b.partner.knots, fraction),
+    } : discrete.partner,
   }
 }

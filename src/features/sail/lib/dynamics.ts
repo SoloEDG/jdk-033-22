@@ -1,12 +1,15 @@
 import { angleDelta, axis, clamp, normalize } from '../../../shared/math'
 import type { Boat, Wind } from '../../../shared/race'
 
+export function preferredSheet(heading: number, wind: Wind): number {
+  return clamp((Math.abs(angleDelta(heading, wind.bearing)) - 37) * .55, 9, 78)
+}
+
 export function advanceBoat(boat: Boat, wind: Wind, dt: number): Boat {
   const turn = boat.rudder * (26 + Math.min(boat.knots, 18))
   const heading = normalize(boat.heading + turn * dt)
   const fromWind = Math.abs(angleDelta(heading, wind.bearing))
-  const preferredSheet = clamp((fromWind - 37) * .55, 9, 78)
-  const trim = Math.max(.08, 1 - Math.abs(boat.sheet - preferredSheet) / 69)
+  const trim = Math.max(.08, 1 - Math.abs(boat.sheet - preferredSheet(heading, wind)) / 69)
   const lift = clamp((fromWind - 32) / 45, 0, 1) * (1 - Math.max(0, fromWind - 110) / 180)
   const target = .65 + wind.knots * 1.03 * lift * trim
   const knots = boat.knots + (target - boat.knots) * (1 - Math.exp(-dt * 1.45))

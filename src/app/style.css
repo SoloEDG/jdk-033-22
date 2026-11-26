@@ -83,6 +83,12 @@ input[type=range] { width: 100%; margin: 5px 0 10px; accent-color: #39696a; }
 .replay-controls input { margin: 0; }
 .event-list { display: flex; flex-direction: column; margin-top: 8px; max-height: 140px; overflow: auto; }
 .event-list button { display: flex; gap: 8px; min-height: 32px; align-items: center; text-align: left; padding: 5px; border: 0; border-top: 1px solid #d9d2b9; background: transparent; font-size: 12px; }
+.event-list button::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #b9b39a; flex: none; }
+.event-list button[data-kind=mark]::before, .event-list button[data-kind=finish]::before { background: #4c7065; }
+.event-list button[data-kind=collision]::before, .event-list button[data-kind=contact]::before { background: #c0532f; }
+.event-list button[data-kind=duty]::before { background: #3d6f8e; }
+.event-list button[data-kind=exhaust]::before { background: #c98a2b; }
+.event-list button[data-kind=verdict]::before { background: #893b27; }
 .event-list button:hover { background: #ffe598; }
 .event-list time, .event-list b { font: 11px var(--mono); }
 .event-list b { margin-left: auto; color: #893b27; }
